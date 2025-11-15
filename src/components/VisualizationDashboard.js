@@ -9,6 +9,7 @@
 // 7. 목표보다 부족할 경우 부족 기간 자동 연장 안내
 
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import {
   AreaChart,
   Area,

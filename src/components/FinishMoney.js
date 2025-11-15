@@ -4,19 +4,15 @@ import styled from "styled-components";
 function FinishMoney() {
   const [open, setOpen] = useState(false);
 
-  const Car = styled.div`
-
-  `
-
   return (
     <div>
       {/* 목표 금액 컴포넌트 */}
       <Car
         style={{
-                    marginTop: 50;
-          padding: 20;
-          border: "1px solid #ccc";
-          borderRadius: 10;
+          marginTop: 50,
+          padding: 20,
+          border: "1px solid #ccc",
+          borderRadius: 10,
         }}
       >
         <h3>🎯 목표 금액 설정</h3>
