@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import Layout from "./components/Layout";
 import Modal from "./components/Modal";
+import Visual from "./components/VisualizationDashboard";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -47,6 +48,7 @@ function App() {
           </button>
         </div>
       </Modal>
+      <Visual />
     </Layout>
   );
 }
