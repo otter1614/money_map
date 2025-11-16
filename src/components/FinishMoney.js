@@ -7,7 +7,7 @@ function FinishMoney() {
   return (
     <div>
       {/* 목표 금액 컴포넌트 */}
-      <Car
+      <div
         style={{
           marginTop: 50,
           padding: 20,
@@ -51,7 +51,7 @@ function FinishMoney() {
             <p>🎉 목표 금액을 이미 달성했습니다!</p>
           )}
         </div>
-      </Car>
+      </div>
     </div>
   );
 }
