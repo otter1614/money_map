@@ -1,0 +1,668 @@
+/* ============================
+ * 기본 세팅 + 박스 모델
+ * ============================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    sans-serif;
+  background-color: #f4f5f7;
+  color: #111827;
+}
+
+/* 전체 앱 레이아웃 */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ============================
+ * 사이드바 (스크롤해도 왼쪽에 고정 느낌)
+ * ============================ */
+.sidebar {
+  width: 180px;
+  flex-shrink: 0;
+  background: #020617;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px;
+
+  /* 스크롤 내려도 화면 왼쪽 상단에 고정되도록 */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.logo-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #22c55e);
+}
+
+.logo-text {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  background-color: #111827;
+  color: #e5e7eb;
+}
+
+.menu-item.active {
+  background: #1d4ed8;
+  color: #f9fafb;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.sidebar-version {
+  margin: 0;
+}
+
+/* ============================
+ * 메인 영역
+ * ============================ */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 상단 바 */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #ffffff;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.topbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* 메인 컨텐츠 (스크롤 영역) */
+.content {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* ============================
+ * 섹션 공통 (섹션 간 간격 넓히기)
+ * ============================ */
+.section {
+  max-width: 1200px;
+  margin: 0 auto 150px auto; /* 이전보다 여유 있게 간격 */
+}
+
+.section-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+}
+
+.section-header p {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ============================
+ * 카드 공통
+ * ============================ */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.card-title {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ============================
+ * 대시보드 카드 그리드
+ * ============================ */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card-label {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+}
+
+.card-value {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+/* ============================
+ * 수입/지출 입력 레이아웃
+ * ============================ */
+.section-income .income-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* 폼 헤더: 제목 + 수입/지출 토글 버튼 */
+.form-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mode-toggle-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mode-toggle-btn:hover {
+  background: #f3f4f6;
+}
+
+/* 폼 그룹 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+/* 공통 입력 요소 기본 스타일 */
+input,
+textarea {
+  font-size: 14px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  outline: none;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+}
+
+/* 셀렉트(수입원/지출원, 필터 등) 공통 스타일 + 드롭다운 화살표 정렬 */
+select {
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  outline: none;
+
+  /* 기본 브라우저 화살표 제거 */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* 커스텀 화살표 */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' width='12' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><polygon points='0,0 20,0 10,10'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+
+  /* 텍스트 여백 + 화살표 여유 공간 */
+  padding: 9px 10px;
+  padding-right: 34px;
+}
+
+select:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+}
+
+/* 반복 수입/지출 박스 */
+.repeat-box {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #eff6ff;
+}
+
+.repeat-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.repeat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.repeat-helper {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.form-group-inline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.form-group-inline select,
+.form-group-inline input {
+  flex: 1 1 120px;
+  min-width: 0;
+}
+
+/* 최근 입력 추천 UI */
+.recent-suggestions {
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+.recent-title {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.recent-helper {
+  margin: 6px 0 0 0;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: #f3f4f6;
+  color: #374151;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: #e5e7eb;
+}
+
+/* 기본 버튼 */
+.primary-btn {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.primary-btn:hover {
+  background: #1d4ed8;
+}
+
+/* ============================
+ * 수입/지출 내역 대시보드 카드 헤더
+ * ============================ */
+.card-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.card-header-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 필터 초기화 버튼 */
+.filter-reset-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-reset-btn:hover {
+  background: #f3f4f6;
+}
+
+/* ============================
+ * 수입/지출 내역 테이블
+ * ============================ */
+.table-wrapper {
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.income-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.income-table thead {
+  background: #f9fafb;
+}
+
+.income-table th,
+.income-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.income-table th {
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.empty-row td {
+  text-align: center;
+  color: #9ca3af;
+}
+
+/* ============================
+ * 필터 바
+ * ============================ */
+.filter-bar {
+  margin-top: 4px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+/* 3열 그리드: 기간 / 수입/지출원 / 금액 범위 */
+.filter-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+  gap: 12px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.filter-group label {
+  font-size: 12px;
+  color: #4b5563;
+}
+
+/* 인라인 입력 (기간, 금액 범위 공통) */
+.filter-inline {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 6px;
+  align-items: center;
+}
+
+.filter-inline input {
+  width: 100%;
+}
+
+.filter-separator {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* 기간 전용 (date input 크기 조정 가능할 때 확장 여지용) */
+/* .filter-inline--dates input[type="date"] {} 커스텀 여지
+   예: width, padding, date 아이콘 숨기기 등 필요 시 여기서 수정 */
+
+/* 금액 범위: 최소/최대가 동일한 비율로 배치되도록 */
+.filter-inline--amount input[type="number"] {
+  max-width: 100%;
+}
+
+/* ============================
+ * 시각화 대시보드 레이아웃
+ * ============================ */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-grid-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  gap: 16px;
+}
+
+.chart-card .chart-placeholder {
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px dashed #d1d5db;
+  padding: 24px;
+  font-size: 13px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+/* 요약 지표 카드 */
+.summary-card .summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+}
+
+.summary-card .summary-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.summary-card .summary-list li span {
+  color: #4b5563;
+}
+
+.summary-card .summary-list li strong {
+  font-weight: 600;
+}
+
+.summary-helper {
+  margin: 6px 0 0 0;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ============================
+ * 데이터 관리 카드
+ * ============================ */
+.data-card .data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px 0;
+}
+
+.secondary-btn,
+.danger-btn {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+.secondary-btn:hover {
+  background: #f3f4f6;
+}
+
+.danger-btn {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.danger-btn:hover {
+  background: #fecaca;
+}
+
+.data-notice {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.data-notice p {
+  margin: 4px 0;
+}
+
+/* 혹시 남아 있을 수 있는 패널 토글용 클래스 */
+.form-panel.is-hidden {
+  display: none;
+}
+
+/* ============================
+ * 반응형 (태블릿/모바일)
+ * ============================ */
+@media (max-width: 960px) {
+  .sidebar {
+    display: none;
+  }
+
+  .topbar {
+    padding-inline: 16px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-income .income-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-grid-wide {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+
+
