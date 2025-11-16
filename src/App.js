@@ -1,21 +1,9 @@
-import React, { useState } from "react";
-import "./App.css";
-import Layout from "./components/Layout";
-import Modal from "./components/Modal";
-import Visual from "./components/VisualizationDashboard";
-import FinishMoney from "./components/FinishMoney";
-import Test from "./components/Test.js";
+// src/App.js
+import React from "react";
+import "./styles.css";
+import BudgetPage from "./components/BudgetPage";
 
 function App() {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <Layout>
-      <Visual />
-      <FinishMoney />
-      <Test />
-    </Layout>
-  );
+  return <BudgetPage />;
 }
-
 export default App;
