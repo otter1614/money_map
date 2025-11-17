@@ -1,16 +1,15 @@
-import React from 'react';
-import { useLocalStorage } from '../util/useLocalStorage';
-import Papa from 'papaparse';
-import { CSVLink } from 'react-csv';
-import '../styles/DataManagementUI.css';
+import React from "react";
+import Papa from "papaparse";
+import { CSVLink } from "react-csv";
+import "../styles/DataManagementUI.css";
 
 const CSV_HEADERS = [
-  { label: 'ID', key: 'id' },
-  { label: '항목', key: 'item' },
-  { label: '금액', key: 'amount' },
+  { label: "ID", key: "id" },
+  { label: "항목", key: "item" },
+  { label: "금액", key: "amount" },
 ];
 
-const STORAGE_KEY = 'my-transaction-data';
+const STORAGE_KEY = "my-transaction-data";
 
 export default function DataManagementUI() {
   const [data, setData] = useLocalStorage(STORAGE_KEY, []);
@@ -36,7 +35,7 @@ export default function DataManagementUI() {
   };
 
   const handleReset = () => {
-    if (window.confirm('모든 데이터를 초기화하시겠습니까?')) {
+    if (window.confirm("모든 데이터를 초기화하시겠습니까?")) {
       setData([]);
     }
   };
@@ -71,9 +70,9 @@ export default function DataManagementUI() {
         전체 데이터 초기화
       </button>
 
-      <h3 style={{ marginTop: '20px' }}>현재 데이터 (로컬 저장소)</h3>
+      <h3 style={{ marginTop: "20px" }}>현재 데이터 (로컬 저장소)</h3>
       <div className="data-display">
-        {data.length > 0 ? JSON.stringify(data, null, 2) : '데이터가 없습니다.'}
+        {data.length > 0 ? JSON.stringify(data, null, 2) : "데이터가 없습니다."}
       </div>
     </div>
   );

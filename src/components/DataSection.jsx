@@ -2,6 +2,34 @@
 import React from "react";
 
 function DataSection() {
+  const [data, setData] = useLocalStorage(STORAGE_KEY, []);
+
+  const handleImport = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const importedData = results.data.map((row) => ({
+          ...row,
+          amount: parseFloat(row.amount) || 0,
+          id: row.id || crypto.randomUUID(),
+        }));
+        setData(importedData);
+      },
+    });
+
+    event.target.value = null;
+  };
+
+  const handleReset = () => {
+    if (window.confirm("모든 데이터를 초기화하시겠습니까?")) {
+      setData([]);
+    }
+  };
+
   return (
     <section id="data" className="section">
       <div className="section-header">
