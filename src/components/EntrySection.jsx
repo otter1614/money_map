@@ -1,8 +1,7 @@
-// src/components/EntrySection.jsx >> 수입/지출 입력 + 로컬스토리지 + 반복 수입/지출 + 테이블 파트
 import React, { useEffect, useMemo, useState } from "react";
+import PouchDB from "pouchdb-browser";
 
-const STORAGE_KEY_INCOME = "mytoss_income_entries";
-const STORAGE_KEY_EXPENSE = "mytoss_expense_entries";
+const db = new PouchDB("finance_db");
 
 const chipPresets = [
   {
@@ -27,8 +26,6 @@ const chipPresets = [
     memo: "부업 수입",
   },
 ];
-
-// 금액 포맷터 (음수/양수 모두 처리)
 function formatAmount(value) {
   const num = Number(value);
   if (Number.isNaN(num)) return "0원";
@@ -36,7 +33,6 @@ function formatAmount(value) {
   return num < 0 ? `-${abs}원` : `${abs}원`;
 }
 
-// Date → "YYYY-MM-DD"
 function formatDate(d) {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -44,7 +40,6 @@ function formatDate(d) {
   return `${year}-${month}-${day}`;
 }
 
-// "반복 없음" / "매월" / "매주" / "매일" → 내부 코드
 function normalizeRepeatType(value) {
   if (!value || value === "반복 없음") return "none";
   if (value === "매월") return "month";
@@ -53,7 +48,6 @@ function normalizeRepeatType(value) {
   return "none";
 }
 
-// 반복 수에 따라 여러 날짜 생성
 function generateRepeatDates(baseDateStr, rawRepeatType, repeatCount) {
   const dates = [];
   if (!baseDateStr) return dates;
@@ -61,22 +55,16 @@ function generateRepeatDates(baseDateStr, rawRepeatType, repeatCount) {
   const baseDate = new Date(baseDateStr);
   const repeatType = normalizeRepeatType(rawRepeatType);
 
-  dates.push(baseDateStr); // 기본 1개
+  dates.push(baseDateStr);
 
   const countNum = Number(repeatCount);
-  if (repeatType === "none" || !countNum || countNum <= 1) {
-    return dates;
-  }
+  if (repeatType === "none" || !countNum || countNum <= 1) return dates;
 
   for (let i = 1; i < countNum; i++) {
     const d = new Date(baseDate);
-    if (repeatType === "month") {
-      d.setMonth(d.getMonth() + i);
-    } else if (repeatType === "week") {
-      d.setDate(d.getDate() + 7 * i);
-    } else if (repeatType === "day") {
-      d.setDate(d.getDate() + i);
-    }
+    if (repeatType === "month") d.setMonth(d.getMonth() + i);
+    else if (repeatType === "week") d.setDate(d.getDate() + 7 * i);
+    else if (repeatType === "day") d.setDate(d.getDate() + i);
     dates.push(formatDate(d));
   }
 
@@ -101,41 +89,33 @@ function EntrySection() {
   const [expenseEntries, setExpenseEntries] = useState([]);
 
   // 초기 로딩: localStorage → state
+  /** -----------------------------
+   *  📥 PouchDB에서 데이터 로드
+   * ------------------------------*/
   useEffect(() => {
-    try {
-      const incomeRaw = localStorage.getItem(STORAGE_KEY_INCOME);
-      const expenseRaw = localStorage.getItem(STORAGE_KEY_EXPENSE);
-      setIncomeEntries(incomeRaw ? JSON.parse(incomeRaw) : []);
-      setExpenseEntries(expenseRaw ? JSON.parse(expenseRaw) : []);
-    } catch (e) {
-      console.warn("로컬스토리지 파싱 중 오류:", e);
-      setIncomeEntries([]);
-      setExpenseEntries([]);
-    }
+    const loadData = async () => {
+      const result = await db.allDocs({ include_docs: true });
+      const allDocs = result.rows.map((r) => r.doc);
+
+      setIncomeEntries(allDocs.filter((d) => d.type === "income"));
+      setExpenseEntries(allDocs.filter((d) => d.type === "expense"));
+    };
+    loadData();
   }, []);
 
-  // state 변경될 때마다 localStorage에 저장
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_INCOME, JSON.stringify(incomeEntries));
-    localStorage.setItem(STORAGE_KEY_EXPENSE, JSON.stringify(expenseEntries));
-  }, [incomeEntries, expenseEntries]);
+  /** -----------------------------
+   *  📤 PouchDB에 데이터 저장 함수
+   * ------------------------------*/
+  const saveToDB = async (entry, type) => {
+    const _id = `${type}-${entry.date}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 6)}`;
 
-  // 수입/지출 합친 테이블용 리스트 (날짜 오름차순)
-  const mergedEntries = useMemo(() => {
-    const merged = [
-      ...incomeEntries.map((e) => ({ ...e, type: "income" })),
-      ...expenseEntries.map((e) => ({ ...e, type: "expense" })),
-    ];
-    merged.sort((a, b) => {
-      if (a.date < b.date) return -1;
-      if (a.date > b.date) return 1;
-      return 0;
-    });
-    return merged;
-  }, [incomeEntries, expenseEntries]);
+    await db.put({ _id, type, ...entry });
+  };
 
   // 저장 버튼 핸들러
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!date || !amount || !source) {
       const label =
         mode === "income"
@@ -169,8 +149,11 @@ function EntrySection() {
     } else {
       setExpenseEntries((prev) => [...prev, ...newEntries]);
     }
-
-    // 폼 일부 리셋 (날짜/수입원은 그대로 두고 금액/메모/반복만 리셋)
+    // PouchDB에 저장
+    for (const entry of newEntries) {
+      await saveToDB(entry, mode);
+    }
+    // 입력값 초기화
     setAmount("");
     setMemo("");
     setRepeatCount("");
@@ -196,13 +179,19 @@ function EntrySection() {
       ".filter-bar input, .filter-bar select"
     );
     inputs.forEach((el) => {
-      if (el.tagName === "SELECT") {
-        el.value = "";
-      } else {
-        el.value = "";
-      }
+      if (el.tagName === "SELECT") el.value = "";
+      else el.value = "";
     });
   };
+
+  const mergedEntries = useMemo(() => {
+    const merged = [
+      ...incomeEntries.map((e) => ({ ...e, type: "income" })),
+      ...expenseEntries.map((e) => ({ ...e, type: "expense" })),
+    ];
+    merged.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    return merged;
+  }, [incomeEntries, expenseEntries]);
 
   const isIncomeMode = mode === "income";
 
